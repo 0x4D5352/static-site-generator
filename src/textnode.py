@@ -30,22 +30,17 @@ class TextNode(object):
 
 def text_node_to_html_node(text_node: TextNode):
     match text_node.text_type:
-        case TextType.TEXT.value:
+        case TextType.TEXT:
             return LeafNode(None, text_node.text)
-        case TextType.BOLD.value:
+        case TextType.BOLD:
             return LeafNode("b", text_node.text)
-        case TextType.ITALIC.value:
+        case TextType.ITALIC:
             return LeafNode("i", text_node.text)
-        case TextType.CODE.value:
+        case TextType.CODE:
             return LeafNode("code", text_node.text)
-        case TextType.LINK.value:
+        case TextType.IMAGE:
+            return LeafNode("img", None, {"src": text_node.url, "alt": text_node.text})
+        case TextType.LINK:
             return LeafNode("a", text_node.text, {"href": f"{text_node.url}"})
-        case TextType.IMAGE.value:
-            return LeafNode("a", None, {"src": text_node.url, "alt": text_node.text})
         case _:
             raise ValueError("invalid text type")
-
-
-def split_nodes_delimiter(old_nodes: list, delimiter: str, text_type: TextType):
-    # TODO: implement error checking for nested loops, then replace with nested loop-ability
-    pass

@@ -28,7 +28,7 @@ class TestHTMLNode(unittest.TestCase):
             {"href": "https://www.test.com"},
         )
         self.assertEqual(
-            "HTMLNode(test, lookatest, [], {'href': 'https://www.test.com'})",
+            "HTMLNode(test, lookatest, children: [], {'href': 'https://www.test.com'})",
             repr(node),
         )
 
