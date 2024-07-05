@@ -55,20 +55,21 @@ def convert_heading_block(block: str) -> ParentNode:
 
 def convert_code_block(block: str) -> ParentNode:
     contents = block.lstrip("`").rstrip("`").strip()
-    return ParentNode("pre", ParentNode("code", extract_children_from_text(contents)))
+    return ParentNode("pre", [ParentNode("code", extract_children_from_text(contents))])
 
 
 def convert_quote_block(block: str) -> ParentNode:
-    contents = " ".join(block.replace("> ", "").split("\n"))
+    contents = block.replace("> ", "")
     return ParentNode("blockquote", children=extract_children_from_text(contents))
 
 
 def convert_unordered_list_block(block: str) -> ParentNode:
-    delimiter = "* " if block.startswith("*") else "- "
+    delimiter = "* " if block.startswith("* ") else "- "
     contents = block.split(delimiter)
     children = [
         ParentNode("li", children=extract_children_from_text(content.strip()))
         for content in contents
+        if content != ""
     ]
     return ParentNode("ul", children=children)
 
@@ -78,6 +79,7 @@ def convert_ordered_list_block(block: str) -> ParentNode:
     children = [
         ParentNode("li", children=extract_children_from_text(content.strip()))
         for content in contents
+        if content != ""
     ]
     return ParentNode("ol", children=children)
 
@@ -124,7 +126,7 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
 
 ```
 def foo():
-    print("hello world!")
+    print('hello world!')
 ```
 """
     print(markdown_to_html_node(md))

@@ -1,4 +1,5 @@
 import unittest
+from htmlnode import ParentNode, LeafNode
 from markdown_blocks import (
     markdown_to_blocks,
     BlockType,
@@ -119,6 +120,88 @@ def foo():
     print("hello world!")
 ```
 """
+
+        res = ParentNode(
+            "div",
+            [
+                ParentNode(
+                    "p",
+                    [
+                        LeafNode(
+                            None, "This is a paragraph of text. It has some ", None
+                        ),
+                        LeafNode("b", "bold", None),
+                        LeafNode(None, " and ", None),
+                        LeafNode("i", "italic", None),
+                        LeafNode(None, " words inside of it.", None),
+                    ],
+                    None,
+                ),
+                ParentNode("h1", [LeafNode(None, "This is a heading", None)], None),
+                ParentNode(
+                    "ul",
+                    [
+                        ParentNode(
+                            "li", [LeafNode(None, "This is a list item", None)], None
+                        ),
+                        ParentNode(
+                            "li",
+                            [LeafNode(None, "This is another list item", None)],
+                            None,
+                        ),
+                    ],
+                    None,
+                ),
+                ParentNode(
+                    "ol",
+                    [
+                        ParentNode(
+                            "li",
+                            [LeafNode(None, "This is an ordered list item", None)],
+                            None,
+                        ),
+                        ParentNode(
+                            "li",
+                            [
+                                LeafNode(None, "This is another list item with ", None),
+                                LeafNode(
+                                    "a", "a link", {"href": "https://www.example.com"}
+                                ),
+                            ],
+                            None,
+                        ),
+                    ],
+                    None,
+                ),
+                ParentNode(
+                    "blockquote",
+                    [
+                        LeafNode(
+                            None, "This is a quote block\nIt has multiple lines", None
+                        )
+                    ],
+                    None,
+                ),
+                ParentNode("h2", [LeafNode(None, "This is a subheading", None)], None),
+                ParentNode(
+                    "pre",
+                    [
+                        ParentNode(
+                            "code",
+                            [
+                                LeafNode(
+                                    None, 'def foo():\n    print("hello world!")', None
+                                )
+                            ],
+                            None,
+                        )
+                    ],
+                    None,
+                ),
+            ],
+            None,
+        )
+        self.assertEqual(markdown_to_html_node(example_one), res)
 
 
 if __name__ == "__main__":
