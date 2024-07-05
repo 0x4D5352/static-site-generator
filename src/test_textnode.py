@@ -1,5 +1,10 @@
 import unittest
-from textnode import TextNode, TextType, text_node_to_html_node
+from textnode import (
+    TextNode,
+    TextType,
+    text_node_to_html_node,
+    extract_children_from_text,
+)
 from htmlnode import LeafNode
 
 
@@ -74,6 +79,10 @@ class TestTextNode(unittest.TestCase):
         )
         bad_node = TextNode("this is a bad node", "bad")
         self.assertRaises(ValueError, text_node_to_html_node, bad_node)
+
+    def test_extract_children(self):
+        text = "somethingsomethingsomething"
+        raise NotImplementedError
 
 
 if __name__ == "__main__":

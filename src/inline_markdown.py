@@ -1,5 +1,5 @@
 import re
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 def text_to_textnodes(text: str) -> list:
@@ -23,6 +23,11 @@ def text_to_textnodes(text: str) -> list:
         if delimiter != "":
             res = split_nodes_delimiter(res, delimiter, text_type)
     return res
+
+
+def extract_children_from_text(block: str) -> list:
+    text_nodes = text_to_textnodes(block)
+    return [text_node_to_html_node(node) for node in text_nodes]
 
 
 def split_nodes_delimiter(old_nodes: list, delimiter: str, text_type: TextType) -> list:

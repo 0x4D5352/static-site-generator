@@ -1,6 +1,7 @@
+import re
 from enum import Enum, auto
 from htmlnode import HTMLNode, ParentNode, LeafNode
-from textnode import extract_children_from_text
+from inline_markdown import extract_children_from_text
 
 
 class BlockType(Enum):
@@ -57,16 +58,27 @@ def convert_code_block(block: str) -> HTMLNode:
 
 
 def convert_quote_block(block: str) -> HTMLNode:
-    raise NotImplementedError
-    return HTMLNode("", children=extract_children_from_text(contents))
+    contents = block.replace("> ", "\n").strip()
+    return HTMLNode("blockquote", children=extract_children_from_text(contents))
 
 
 def convert_unordered_list_block(block: str) -> HTMLNode:
-    raise NotImplementedError
+    delimiter = "* " if block.startswith("*") else "- "
+    contents = block.split(delimiter)
+    children = [
+        HTMLNode("li", children=extract_children_from_text(content.strip()))
+        for content in contents
+    ]
+    return HTMLNode("ul", children=children)
 
 
 def convert_ordered_list_block(block: str) -> HTMLNode:
-    raise NotImplementedError
+    contents = re.split("[0-9]+.", block)
+    children = [
+        HTMLNode("li", children=extract_children_from_text(content.strip()))
+        for content in contents
+    ]
+    return HTMLNode("ol", children=children)
 
 
 def markdown_to_html_node(markdown: str) -> HTMLNode:

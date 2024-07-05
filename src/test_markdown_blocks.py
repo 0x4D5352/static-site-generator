@@ -1,5 +1,10 @@
 import unittest
-from markdown_blocks import markdown_to_blocks, BlockType, block_to_block_type
+from markdown_blocks import (
+    markdown_to_blocks,
+    BlockType,
+    block_to_block_type,
+    markdown_to_html_node,
+)
 
 
 class TestMarkdownToHtml(unittest.TestCase):
@@ -91,6 +96,9 @@ so it should show up as a paragraph block."""
         self.assertEqual(block_to_block_type(example_six), BlockType.UNORDERED_LIST)
         self.assertEqual(block_to_block_type(example_seven), BlockType.ORDERED_LIST)
         self.assertEqual(block_to_block_type(example_eight), BlockType.PARAGRAPH)
+
+    def test_markdown_to_html_node(self):
+        example_one = ""
 
 
 if __name__ == "__main__":
