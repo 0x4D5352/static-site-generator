@@ -1,5 +1,6 @@
 from enum import Enum
 from htmlnode import LeafNode
+from inline_markdown import text_to_textnodes
 
 
 class TextType(Enum):
@@ -28,7 +29,7 @@ class TextNode(object):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
 
-def text_node_to_html_node(text_node: TextNode):
+def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     match text_node.text_type:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
@@ -44,3 +45,8 @@ def text_node_to_html_node(text_node: TextNode):
             return LeafNode("a", text_node.text, {"href": f"{text_node.url}"})
         case _:
             raise ValueError("invalid text type")
+
+
+def extract_children_from_text(block: str) -> list:
+    text_nodes = text_to_textnodes(block)
+    return [text_node_to_html_node(node) for node in text_nodes]
