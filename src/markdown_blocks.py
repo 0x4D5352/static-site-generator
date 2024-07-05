@@ -1,6 +1,6 @@
 import re
 from enum import Enum, auto
-from htmlnode import HTMLNode, ParentNode, LeafNode
+from htmlnode import ParentNode
 from inline_markdown import extract_children_from_text
 
 
@@ -41,47 +41,48 @@ def block_to_block_type(block: str) -> BlockType:
     return BlockType.PARAGRAPH
 
 
-def convert_paragraph_block(block: str) -> HTMLNode:
-    return HTMLNode("p", children=extract_children_from_text(block))
+def convert_paragraph_block(block: str) -> ParentNode:
+    return ParentNode("p", children=extract_children_from_text(block))
 
 
-def convert_heading_block(block: str) -> HTMLNode:
+def convert_heading_block(block: str) -> ParentNode:
     starting_length = len(block)
     contents = block.lstrip("#").strip()
-    tag = f"h{starting_length - len(contents)}"
-    return HTMLNode(tag, children=extract_children_from_text(contents))
+    # the strip messes up the length so we remove 1 from the result
+    tag = f"h{starting_length - len(contents) - 1}"
+    return ParentNode(tag, children=extract_children_from_text(contents))
 
 
-def convert_code_block(block: str) -> HTMLNode:
+def convert_code_block(block: str) -> ParentNode:
     contents = block.lstrip("`").rstrip("`").strip()
-    return HTMLNode("pre", HTMLNode("code", extract_children_from_text(contents)))
+    return ParentNode("pre", ParentNode("code", extract_children_from_text(contents)))
 
 
-def convert_quote_block(block: str) -> HTMLNode:
-    contents = block.replace("> ", "\n").strip()
-    return HTMLNode("blockquote", children=extract_children_from_text(contents))
+def convert_quote_block(block: str) -> ParentNode:
+    contents = " ".join(block.replace("> ", "").split("\n"))
+    return ParentNode("blockquote", children=extract_children_from_text(contents))
 
 
-def convert_unordered_list_block(block: str) -> HTMLNode:
+def convert_unordered_list_block(block: str) -> ParentNode:
     delimiter = "* " if block.startswith("*") else "- "
     contents = block.split(delimiter)
     children = [
-        HTMLNode("li", children=extract_children_from_text(content.strip()))
+        ParentNode("li", children=extract_children_from_text(content.strip()))
         for content in contents
     ]
-    return HTMLNode("ul", children=children)
+    return ParentNode("ul", children=children)
 
 
-def convert_ordered_list_block(block: str) -> HTMLNode:
+def convert_ordered_list_block(block: str) -> ParentNode:
     contents = re.split("[0-9]+.", block)
     children = [
-        HTMLNode("li", children=extract_children_from_text(content.strip()))
+        ParentNode("li", children=extract_children_from_text(content.strip()))
         for content in contents
     ]
-    return HTMLNode("ol", children=children)
+    return ParentNode("ol", children=children)
 
 
-def markdown_to_html_node(markdown: str) -> HTMLNode:
+def markdown_to_html_node(markdown: str) -> ParentNode:
     children = []
     blocks = markdown_to_blocks(markdown)
     for block in blocks:
@@ -102,3 +103,28 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 raise Exception("how'd you find a missing blocktype???")
     top_node = ParentNode("div", children)
     return top_node
+
+
+if __name__ == "__main__":
+    md = """
+This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+# This is a heading
+
+- This is a list item
+- This is another list item
+
+1. This is an ordered list item
+2. This is another list item with [a link](https://www.example.com)
+
+> This is a quote block
+> It has multiple lines
+
+## This is a subheading
+
+```
+def foo():
+    print("hello world!")
+```
+"""
+    print(markdown_to_html_node(md))

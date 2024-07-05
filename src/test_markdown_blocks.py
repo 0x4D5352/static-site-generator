@@ -98,7 +98,27 @@ so it should show up as a paragraph block."""
         self.assertEqual(block_to_block_type(example_eight), BlockType.PARAGRAPH)
 
     def test_markdown_to_html_node(self):
-        example_one = ""
+        example_one = """
+This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+# This is a heading
+
+- This is a list item
+- This is another list item
+
+1. This is an ordered list item
+2. This is another list item with [a link](https://www.example.com)
+
+> This is a quote block
+> It has multiple lines
+
+## This is a subheading
+
+```
+def foo():
+    print("hello world!")
+```
+"""
 
 
 if __name__ == "__main__":
