@@ -59,7 +59,7 @@ def convert_code_block(block: str) -> ParentNode:
 
 
 def convert_quote_block(block: str) -> ParentNode:
-    contents = block.replace("> ", "")
+    contents = " ".join(block.replace("> ", "").split("\n")).strip()
     return ParentNode("blockquote", children=extract_children_from_text(contents))
 
 
