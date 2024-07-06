@@ -42,7 +42,9 @@ def block_to_block_type(block: str) -> BlockType:
 
 
 def convert_paragraph_block(block: str) -> ParentNode:
-    return ParentNode("p", children=extract_children_from_text(block))
+    return ParentNode(
+        "p", children=extract_children_from_text(" ".join(block.split("\n")))
+    )
 
 
 def convert_heading_block(block: str) -> ParentNode:

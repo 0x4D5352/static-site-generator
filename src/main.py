@@ -33,10 +33,27 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
     with open(template_path, "r") as file:
         template = file.read()
     title = extract_title(markdown)
-    content = markdown_to_html_node(markdown).to_html()
-    template.replace("{{ Title }}", title).replace("{{ Content }}", content)
+    content = markdown_to_html_node(markdown)
+    content = content.to_html()
+    generated = template.replace("{{ Title }}", title).replace("{{ Content }}", content)
     with open(dest_path, "w") as file:
-        file.write(template)
+        file.write(generated)
+
+
+def generate_pages_recursive(
+    dir_path_content: str, template_path: str, dest_dir_path
+) -> None:
+    for item in listdir(dir_path_content):
+        item_path = path.join(dir_path_content, item)
+        if path.isfile(item_path):
+            if item.endswith(".md"):
+                item_name = item[:-3]
+                dest_path = path.join(dest_dir_path, item_name + ".html")
+                generate_page(item_path, template_path, dest_path)
+        else:
+            subdirectory = path.join(dest_dir_path, item)
+            mkdir(subdirectory)
+            generate_pages_recursive(item_path, template_path, subdirectory)
 
 
 def main() -> None:
@@ -46,7 +63,7 @@ def main() -> None:
     mkdir("public")
     copy_files("static", "public")
     print("generating pages")
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursive("content", "template.html", "public")
 
 
 if __name__ == "__main__":
